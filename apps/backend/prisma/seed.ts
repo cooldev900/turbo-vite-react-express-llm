@@ -20,6 +20,8 @@ async function main() {
     const players = response.data as unknown as PlayerStats[]; // Adjust based on your API response structure
     const rankedPlayers = players.sort((a, b) => b.Hits - a.Hits).map((value, index) => ({...value, Rank: index+1, AgeThatYear: parseInt(value.AgeThatYear)}));
 
+    await prisma.playerStats.deleteMany();
+
     // Transform and insert data into the database
     for (const player of rankedPlayers) {
       await prisma.playerStats.create({
