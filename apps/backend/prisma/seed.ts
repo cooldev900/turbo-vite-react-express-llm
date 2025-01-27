@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
+import data from './data.json';
 
 const prisma = new PrismaClient();
 
@@ -44,4 +45,27 @@ async function main() {
   }
 }
 
-main();
+async function loadDataFromJSON() {
+  try {
+    // Fetch data from the API
+
+    await prisma.playerStats.deleteMany();
+    
+    // Transform and insert data into the database
+    for (const player of data) {
+      await prisma.playerStats.create({
+        data: player,
+      });
+    }
+    
+    console.log('Data seeded successfully!');
+  } catch (error) {
+    console.error('Error seeding data:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// main();
+
+loadDataFromJSON()
